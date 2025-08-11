@@ -1,0 +1,21 @@
+name: YouTube Live Stream from Google Drive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"  # Khởi động lại mỗi 6 giờ
+
+jobs:
+  stream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cài FFmpeg
+        run: sudo apt update && sudo apt install -y ffmpeg
+
+      - name: Bắt đầu livestream
+        run: |
+          FILE_URL="https://drive.google.com/uc?export=download&id=1S_DnditSNXKhdH_lZrv6WAPk0Kk0tiiW"
+          RTMP_STREAM="rtmp://a.rtmp.youtube.com/live2/${{ secrets.YT_STREAM_KEY }}"
+          ffmpeg -re -i "$FILE_URL" \
+              -c:v libx264 -preset veryfast -b:v 2500k -c:a aac -b:a 128k -ar 44100 \
+              -f flv "$RTMP_STREAM"

@@ -22,7 +22,8 @@ jobs:
         echo "Tải video từ Google Drive..."
         gdown "https://drive.google.com/uc?id=${{ secrets.GDRIVE_FILE_ID }}" -O video.mp4
 
-    - name: Stream lên YouTube
+    - name: Stream lên YouTube (loop vô hạn)
       run: |
         echo "Bắt đầu phát trực tiếp..."
-        ffmpeg -re -i video.mp4 -c copy -f flv "rtmp://a.rtmp.youtube.com/live2/${{ secrets.YT_STREAM_KEY }}"
+        ffmpeg -re -stream_loop -1 -i video.mp4 \
+        -c copy -f flv "rtmp://a.rtmp.youtube.com/live2/${{ secrets.YT_STREAM_KEY }}"
